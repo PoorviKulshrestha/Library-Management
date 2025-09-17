@@ -28,7 +28,7 @@ def main():
             Lib.view_book()
 
         elif choice == 3:
-            # Return now requires a 4-digit Book-ID
+            
             book_id = input("\nEnter the 4-digit Book-ID you want to return: ").strip()
             Lib.return_book(book_id)
 
@@ -38,7 +38,7 @@ def main():
         elif choice == 5:
             Lib.count_views()
 
-        elif choice == 6:          # <-- new option
+        elif choice == 6:          
             Lib.donate_book()
 
         elif choice == 7:

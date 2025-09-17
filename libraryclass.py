@@ -9,28 +9,41 @@ trans_col = db["transactions"]
 
 class Library:
     def __init__(self):
-        # Seed the DB only once with sequential 4-digit IDs starting at 1001
+        
         if books_col.count_documents({}) == 0:
             initial_books = [
-                "Harry Potter", "Godan", "Around the world in 80 days", "Gaban",
-                "Wings of fire", "Atomic Habits", "Rangbhoomi", "Jujutsu Kaisen",
-                "Animal Farm", "Ikigai", "1984", "Merchant of Venice",
-                "Metamorphosis", "The Alchemist", "Autobiography of a Yogi",
-                "Source code", "The courage to be disliked", "Rich Dad Poor Dad",
+                {"title": "Harry Potter",               "count": 25},
+                {"title": "Godan",                      "count": 13},
+                {"title": "Around the world in 80 days", "count": 4},
+                {"title": "Gaban",                      "count": 12},
+                {"title": "Wings of fire",              "count": 16},
+                {"title": "Atomic Habits",              "count": 13},
+                {"title": "Rangbhoomi",                 "count": 12},
+                {"title": "Jujutsu Kaisen",             "count": 4},
+                {"title": "Animal Farm",                "count": 5},
+                {"title": "Ikigai",                     "count": 12},
+                {"title": "1984",                       "count": 14},
+                {"title": "Merchant of Venice",         "count": 12},
+                {"title": "Metamorphosis",              "count": 3},
+                {"title": "The Alchemist",              "count": 4},
+                {"title": "Autobiography of a Yogi",    "count": 12},
+                {"title": "Source code",                "count": 11},
+                {"title": "The courage to be disliked", "count": 3},
+                {"title": "Rich Dad Poor Dad",          "count": 15},
             ]
             start_id = 1001
             books_col.insert_many([
                 {
                     "book_id": f"{start_id + i}",
-                    "title": title,
-                    "total_count": 1,
-                    "available_count": 1,
+                    "title": b["title"],
+                    "total_count": b["count"],
+                    "available_count": b["count"],
                     "view_count": 0
                 }
-                for i, title in enumerate(initial_books)
+                for i, b in enumerate(initial_books)
             ])
 
-    # -------- Display all books with counts & views --------
+    
     def display(self):
         print("\nBooks in Library:")
         for doc in books_col.find().sort("book_id", 1):
@@ -42,7 +55,7 @@ class Library:
             )
         print()
 
-    # -------- View a book and increment DB view_count --------
+    
     def view_book(self):
         book_id = input("Enter the 4-digit Book-ID you want to view: ").strip()
         book = books_col.find_one({"book_id": book_id})
@@ -60,7 +73,7 @@ class Library:
         else:
             print("Book ID not found.\n")
 
-    # -------- Show most/least viewed books --------
+    
     def count_views(self):
         choice = input("Press 1 for ascending order or 2 for descending: ").strip()
         order = 1 if choice == "1" else -1
@@ -69,7 +82,7 @@ class Library:
             print(f"{doc['title']} -> {doc.get('view_count',0)} views")
         print()
 
-    # -------- Borrow a book --------
+    
     def borrow_book(self, book_id):
         name = input("Enter your name: ").strip()
         uid = input("Enter your unique 6-digit library ID: ").strip()
@@ -101,7 +114,7 @@ class Library:
         else:
             print("Requested book not available or wrong ID.\n")
 
-    # -------- Return a book --------
+    
     def return_book(self, book_id):
         name = input("Enter your name: ").strip()
         uid = input("Enter your unique 6-digit library ID (must match borrow ID): ").strip()
@@ -142,7 +155,7 @@ class Library:
         })
         print(f"Thank you for returning '{borrow_record['title']}'.\n")
 
-    # -------- Sort books by title --------
+    
     def sort_books(self):
         choice = input("Enter 1 to sort ascending or 2 descending: ").strip()
         order = 1 if choice == "1" else -1
@@ -155,9 +168,10 @@ class Library:
             print(f"ID: {doc['book_id']} | {doc['title']} ({status})")
         print()
 
-    # -------- Donate a book --------
+
     def donate_book(self):
         donor = input("Enter your name: ").strip()
+        donor_id = input("Enter your 6-digit Library ID: ").strip()
         new_title = input("Enter the title of the book you wish to donate: ").strip()
 
         existing = books_col.find_one({"title": new_title})
@@ -181,7 +195,7 @@ class Library:
 
         trans_col.insert_one({
             "user": donor,
-            "library_id": None,
+            "library_id": donor_id,
             "book_id": new_id,
             "title": new_title,
             "action": "donate",
