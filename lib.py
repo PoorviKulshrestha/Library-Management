@@ -1,7 +1,7 @@
-from libraryclass import library
+from libraryclass import Library
 
 def main():
-    Lib = library()
+    Lib = Library()
     print("     ===== WELCOME TO LIBRARY MANAGEMENT SYSTEM =====\n")
     while True:
         print(
